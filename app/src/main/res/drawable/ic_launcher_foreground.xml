@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  图标：一个聊天气泡 + 内部一个「概率条」，暗示「说出的话背后还有一层」。
+  纯矢量，无位图资源。
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- 聊天气泡 -->
+    <path
+        android:fillColor="#22D3EE"
+        android:pathData="M32,30 h44 a10,10 0 0 1 10,10 v26 a10,10 0 0 1 -10,10 h-24 l-14,12 v-12 h-6 a10,10 0 0 1 -10,-10 v-26 a10,10 0 0 1 10,-10 z" />
+
+    <!-- 气泡内三条概率条 -->
+    <path
+        android:fillColor="#0B0D10"
+        android:pathData="M34,42 h34 v5 h-34 z" />
+    <path
+        android:fillColor="#0B0D10"
+        android:pathData="M34,52 h22 v5 h-22 z" />
+    <path
+        android:fillColor="#0B0D10"
+        android:pathData="M34,62 h28 v5 h-28 z" />
+</vector>

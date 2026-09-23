@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  单条概率行： "- 想确认你在不在乎她: 72%"
+
+  ⚠️ 改字号时**别漏了这个文件**：卡片里「是/否概率」「真实意图」「最佳动作」三块
+  的每一行都是它 inflate 出来的，正文占地方最多的就是这里。
+  2026-09-23 第一次做卡片瘦身时只改了 overlay_card.xml，
+  结果御主反馈「字还是大」—— 就是这个文件漏改。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="0dp"
+    android:paddingBottom="0dp">
+
+    <TextView
+        android:id="@+id/row_bullet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="- "
+        android:textColor="@color/overlay_text_dim"
+        android:textSize="9sp" />
+
+    <TextView
+        android:id="@+id/row_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/overlay_text"
+        android:textSize="9sp" />
+
+    <TextView
+        android:id="@+id/row_percent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:minWidth="32dp"
+        android:gravity="end"
+        android:textColor="@color/brand"
+        android:textSize="9sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

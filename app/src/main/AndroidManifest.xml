@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <!-- 截屏通道需要：微信屏蔽了无障碍，只能靠截屏读消息 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- 保活：让用户能把本 App 加入「不优化电池」白名单。
+         无障碍服务是本 App 的命门，被系统冻结回收就等于整个功能失效，
+         而用户只会看到「悬浮球还在、但微信来消息毫无反应」。
+         这条权限只用于弹系统那个「是否允许后台运行」对话框，不做别的事。 -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+    <!-- 只探测微信是否安装，不申请 QUERY_ALL_PACKAGES -->
+    <queries>
+        <package android:name="com.tencent.mm" />
+    </queries>
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <!-- 把运行日志以文件形式分享出去（自己写的极简 FileProvider，零依赖） -->
+        <provider
+            android:name=".util.LogFileProvider"
+            android:authorities="${applicationId}.logfiles"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+
+        <activity
+            android:name=".LogActivity"
+            android:exported="false"
+            android:label="@string/log_title"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".ApiSettingsActivity"
+            android:exported="false"
+            android:label="@string/api_title"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- 悬浮窗前台服务。mediaProjection 类型是给截屏通道用的：
+             Android 14+ 要求「先以 mediaProjection 类型启动前台服务，再调 getMediaProjection()」 -->
+        <service
+            android:name=".OverlayService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse|mediaProjection">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="用户主动开启后，在屏幕上常驻显示聊天语境分析悬浮窗" />
+        </service>
+
+        <!-- 申请截屏授权用的透明页面（系统弹窗需要一个 Activity 承接回调） -->
+        <activity
+            android:name=".capture.CapturePermissionActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:theme="@style/TransparentTheme" />
+
+        <!-- 读屏服务：仅在用户手动授权后读取聊天文本 -->
+        <service
+            android:name=".JevAccessibilityService"
+            android:exported="true"
+            android:label="@string/accessibility_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+    </application>
+
+</manifest>

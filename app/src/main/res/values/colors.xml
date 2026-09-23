@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 品牌色：对齐参考图的冷灰卡片 + 青色高亮 -->
+    <color name="brand">#22D3EE</color>
+    <color name="brand_dim">#0E7490</color>
+
+    <!-- 背景 -->
+    <color name="bg_root">#0B0D10</color>
+    <color name="bg_card">#15181D</color>
+    <color name="bg_card_alt">#1C2027</color>
+    <color name="stroke_soft">#2A2F38</color>
+
+    <!-- 文字 -->
+    <color name="text_primary">#ECEDEE</color>
+    <color name="text_secondary">#9BA1A6</color>
+    <color name="text_faint">#6B7280</color>
+
+    <!-- 悬浮窗（半透明，能透出后面的聊天界面） -->
+    <color name="overlay_bg">#F21A1D21</color>
+    <color name="overlay_stroke">#33FFFFFF</color>
+    <color name="overlay_header">#7DD3FC</color>
+    <color name="overlay_text">#E8EAED</color>
+    <color name="overlay_text_dim">#A0A6AD</color>
+
+    <!-- 危险等级 -->
+    <color name="danger_low">#22C55E</color>
+    <color name="danger_mid">#EAB308</color>
+    <color name="danger_high">#F97316</color>
+    <color name="danger_critical">#EF4444</color>
+
+    <!-- 状态 -->
+    <color name="ok">#4ADE80</color>
+    <color name="warn">#FBBF24</color>
+    <color name="err">#F87171</color>
+
+    <color name="ic_launcher_background">#0B0D10</color>
+</resources>

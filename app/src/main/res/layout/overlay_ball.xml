@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  悬浮球：单击展开卡片 · 长按 3 秒关闭 · 拖动可移位
+
+  结构：底层圆形 + 中央字形 + 右上角危险角标 + 长按时的红环。
+  字形默认是 👀（在 BallStyles 里配置），所以这里不写死 android:text ——
+  写死的话冷启动那一瞬间会闪一下默认字母。
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ball_root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/ball_text"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_ball"
+        android:elevation="6dp"
+        android:gravity="center"
+        android:textColor="@color/brand"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <!-- 长按倒计时的红环，平时隐藏 -->
+    <View
+        android:id="@+id/ball_ring"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_ball_ring"
+        android:elevation="7dp"
+        android:visibility="gone" />
+
+    <!-- 危险等级角标，平时隐藏 -->
+    <TextView
+        android:id="@+id/ball_badge"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="top|end"
+        android:background="@drawable/bg_pill"
+        android:elevation="8dp"
+        android:gravity="center"
+        android:textColor="@color/danger_critical"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+</FrameLayout>

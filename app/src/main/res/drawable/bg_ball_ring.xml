@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  长按倒计时时套在球外面的红圈 —— 用来「让用户看得见时间在走」。
+
+  为什么需要它：球的默认字形是 emoji（👀），倒计时把字形换成数字时，
+  两者的字形宽度与视觉重量都不一样，再加上 emoji 本身是彩色的，
+  「变红了」这件事在视觉上几乎传达不出来。加一圈红环则一眼可见。
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@android:color/transparent" />
+    <stroke
+        android:width="3dp"
+        android:color="@color/danger_critical" />
+</shape>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  读屏服务配置。
+
+  ── 关于 android:isAccessibilityTool ──
+  这是 Android 16 引入的「无障碍数据敏感」机制要求的标志位：服务若不声明它，
+  在部分场景下会读不到被 App 标记为敏感的内容。
+  官方 API 文档原话：
+    "Accessibility interactions from services without isAccessibilityTool
+     set to true are disallowed..."
+
+  ⚠️ **但它并不是「读不到微信」的原因 —— 这一点已被真机证伪，别被旧结论误导。**
+  2026-09-22 真机（OnePlus / Android 16）的完整实测过程：
+    1. 起初看到「事件收得到、包名读得到，但节点树只剩空骨架」，据此推测是这个标志位；
+    2. 加上 `android:isAccessibilityTool="true"`（已确认写进 APK：`0x01010641=true`），
+       真机日志确认「是无障碍工具=是」—— **标志位生效了，树依旧是空的。假设不成立。**
+    3. 随后用「非目标 App 节点树体检」拿到决定性证据：系统设置、桌面、**甚至 QQ**
+       都能读到完整节点树（24 个节点），**只有微信是空壳**。
+       结论：微信 8.0.78 单方面屏蔽了无障碍读取，与本标志位无关。
+  技术路线因此改为「无障碍只当触发器，内容靠截屏」——见 capture/ChatShot 与 ScreenCapture。
+
+  保留这一行的理由：它本身是对的（合规地声明本服务用途），
+  也能避免将来重蹈「看到一个现象就急着下结论」的覆辙。
+  **不要因为微信读不到就删它**，删了会引入别的问题。
+
+  ⚠️ 需要注意的含义：这个标志位的官方定义是「本服务是面向残障人士的无障碍工具」。
+  本项目是娱乐向的语境分析工具，严格说不属于该定义。
+  它同时影响 Google Play 的政策合规（本项目不走 Play，走 GitHub 分发）。
+  此取舍已在任务书中记录，由御主知悉。
+
+  ── 关于 packageNames ──
+  刻意不写 android:packageNames：写死包名后用户换聊天软件就完全收不到事件，
+  必须重新编译。不写则由代码里的白名单过滤，便于后续扩展。
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowContentChanged|typeWindowStateChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagReportViewIds|flagRetrieveInteractiveWindows|flagIncludeNotImportantViews"
+    android:canRetrieveWindowContent="true"
+    android:description="@string/accessibility_description"
+    android:isAccessibilityTool="true"
+    android:notificationTimeout="200"
+    android:summary="@string/accessibility_summary" />
+

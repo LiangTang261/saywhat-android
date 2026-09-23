@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 悬浮球：深色底 + 青色描边，中间放一个 J -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#F215181D" />
+    <stroke
+        android:width="2dp"
+        android:color="@color/brand" />
+</shape>

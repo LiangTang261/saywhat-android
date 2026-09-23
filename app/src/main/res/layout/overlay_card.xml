@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  AI 分析卡片 —— 视觉基准见 assets/ref/原版参考图.jpg
+  （参考图里那个模型叫 Jev，抬头原本是 `Jev:`；御主 2026-09-22 要求界面上不出现第三方模型名，已改成 `AI:`）
+
+  结构：标题行 / 引用原句 / 是非概率 / 真实意图 / 最佳动作 / 危险等级 / 一句话建议 / 最佳回复
+
+  ═══ 尺寸约定（2026-09-23 按御主反馈连调两轮）═══
+  第一轮（御主：「分析太长了挡视野」）：
+    · 宽度 300dp → 264dp、正文限高 0.52 → 0.40 屏、字号各降 1sp
+  第二轮（御主：「字体和行间距还是太大，压缩到原来的一半」）：
+    · 宽度 264dp → **196dp**（代码里的 CARD_DP）
+    · 正文限高 0.40 → **0.26 屏**（代码里的 CARD_MAX_HEIGHT_RATIO）
+    · 字号：抬头 11sp / 区块标题 10sp / 正文与概率行 9sp
+    · 行距 lineSpacingExtra 3dp → 1dp；区块间距 9dp → 5dp、8dp → 4dp、5dp → 3dp
+    · 内边距 12/10dp → 9/7dp；概率行上下内边距 2dp → 0
+
+  ⚠️⚠️ **改这张卡片的尺寸时，三个文件必须一起改**，漏一个就会出现
+  「改了却看不出变小」的怪现象（第二轮就是这么被发现的）：
+    1. 本文件 overlay_card.xml —— 容器与各区块
+    2. item_score.xml —— 概率行（是/否、真实意图、最佳动作的**每一行**都在它里面）
+    3. overlay_compact.xml —— 打字时的简略条
+  另外 Kotlin 侧还有两个常量：`CARD_DP` 与 `CARD_MAX_HEIGHT_RATIO`。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_root"
+    android:layout_width="196dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_overlay_card"
+    android:orientation="vertical"
+    android:paddingStart="9dp"
+    android:paddingEnd="9dp"
+    android:paddingTop="7dp"
+    android:paddingBottom="7dp">
+
+    <!-- ── 标题行（同时作为拖动这张卡片的把手） ── -->
+    <LinearLayout
+        android:id="@+id/card_header_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/card_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/card_header"
+            android:textColor="@color/overlay_header"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/card_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/overlay_text_dim"
+            android:textSize="9sp" />
+
+        <TextView
+            android:id="@+id/card_close"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:text="✕"
+            android:textColor="@color/overlay_text_dim"
+            android:textSize="9sp" />
+    </LinearLayout>
+
+    <!-- ── 情境标签（试探态度 / 直接质问 / 索求动作 / 情绪降温 / 日常闲聊）── -->
+    <TextView
+        android:id="@+id/card_scene"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:background="@drawable/bg_pill"
+        android:paddingStart="9dp"
+        android:paddingEnd="9dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:textSize="9sp"
+        android:visibility="gone" />
+
+    <!-- ── 正文（可滚动，高度在代码里限死，避免卡片撑出屏幕） ── -->
+    <com.saywhat.app.view.MaxHeightScrollView
+        android:id="@+id/card_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 被分析的原句 -->
+            <TextView
+                android:id="@+id/card_quote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/overlay_text_dim"
+                android:textSize="9sp"
+                android:visibility="gone" />
+
+            <!-- 问题 + 是/否 -->
+            <TextView
+                android:id="@+id/card_question"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:textColor="@color/overlay_text"
+                android:textSize="9sp"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/card_question_rows"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone" />
+
+            <!-- 当前真实意图 -->
+            <TextView
+                android:id="@+id/card_intent_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/overlay_text"
+                android:textSize="10sp"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/card_intent_rows"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone" />
+
+            <!-- 最佳动作 -->
+            <TextView
+                android:id="@+id/card_action_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/overlay_text"
+                android:textSize="10sp"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/card_action_rows"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone" />
+
+            <!-- 危险等级 -->
+            <LinearLayout
+                android:id="@+id/card_danger_block"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/card_danger"
+                        android:textColor="@color/overlay_text"
+                        android:textSize="9sp" />
+
+                    <TextView
+                        android:id="@+id/card_danger_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/overlay_text"
+                        android:textSize="9sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!--
+                  进度条用 FrameLayout + 按实测宽度设像素宽，不用 layout_weight。
+                  原因：这条 bar 的父容器是从 GONE 切到 VISIBLE 的，
+                  那一刻用 weight 分配宽度会算错（真机实测 7/10 只填了约 20%）。
+                -->
+                <FrameLayout
+                    android:id="@+id/card_danger_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:layout_marginTop="3dp"
+                    android:background="@drawable/bg_danger_track">
+
+                    <View
+                        android:id="@+id/card_danger_fill"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_danger_fill" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <!-- 一句话建议 -->
+            <TextView
+                android:id="@+id/card_advice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:lineSpacingExtra="1dp"
+                android:textColor="@color/overlay_text"
+                android:textSize="9sp"
+                android:visibility="gone" />
+
+            <!--
+              最佳回复：一条可以直接复制发给对方的完整句子。
+              与上面「最佳动作」的区别：动作是"该怎么办"，这里是"照着发就行"。
+              整块可点击 —— 点一下即复制到剪贴板。
+            -->
+            <LinearLayout
+                android:id="@+id/card_reply_block"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:background="@drawable/bg_reply"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:paddingStart="7dp"
+                android:paddingEnd="7dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/card_reply_title"
+                        android:textColor="@color/overlay_header"
+                        android:textSize="9sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.06" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/card_reply_copy"
+                        android:textColor="@color/overlay_text_dim"
+                        android:textSize="9sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/card_reply"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:lineSpacingExtra="1dp"
+                    android:textColor="@color/overlay_text"
+                    android:textSize="9sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </com.saywhat.app.view.MaxHeightScrollView>
+
+</LinearLayout>

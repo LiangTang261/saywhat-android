@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  简略条：输入法弹起时替代整张卡片，只留一行「最佳回复」。
+
+  设计取舍：
+  · 整条**可点**，点一下即复制 —— 此时用户的手就在键盘上，
+    不该让他再去瞄一个小按钮。
+  · 左侧竖条用品牌青色，和完整卡片的最佳回复区块同色，让用户一眼认出是同一个东西。
+  · 不显示「AI:」抬头与任何概率 —— 打字的时候这些全是干扰。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/compact_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_overlay_card"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="9dp"
+    android:paddingEnd="9dp"
+    android:paddingTop="7dp"
+    android:paddingBottom="7dp">
+
+    <View
+        android:layout_width="3dp"
+        android:layout_height="20dp"
+        android:background="@color/brand" />
+
+    <TextView
+        android:id="@+id/compact_reply"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@color/overlay_text"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/compact_copy_hint"
+        android:textColor="@color/overlay_header"
+        android:textSize="9sp" />
+
+</LinearLayout>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  通知栏小图标。
+  必须是单色剪影（系统会把它整块染色），所以这里只用白色填充，
+  不能直接复用带彩色填充的启动图标，否则在通知栏会变成一坨色块。
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FFFFFF">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M4,4h16a2,2 0 0 1 2,2v9a2,2 0 0 1 -2,2h-8l-5,4v-4H4a2,2 0 0 1 -2,-2V6a2,2 0 0 1 2,-2z" />
+</vector>
